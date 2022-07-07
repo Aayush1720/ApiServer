@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: NDEP ODE API
+  description: NODE API is a REST API for NDEP On Demand Environments.
+  version: 0.8.0
+servers:
+  - url: http://127.0.0.1:8081/v1
+    description: localhost
+paths:
+  /test1:
+    get:
+      tags:
+        - t1
+      summary: return concat of two strings
+      description: bla
+      operationId: test2
+      responses:
+        "200":
+          description: A list of images
+          content:
+            text/plain:
+              schema:
+                type: string
+      x-openapi-router-controller: node_api.controllers.deploy_controller
+  /test:
+    get:
+      tags:
+        - t1
+      summary: return concat of two strings
+      description: bla
+      operationId: test1
+      parameters:
+        - in: query
+          name: fname
+          schema:
+            type: string
+          required: true
+          description: first name
+        - in: query
+          name: lname
+          schema:
+            type: string
+          required: true
+          description: last name
+      responses:
+        "200":
+          description: A list of images
+          content:
+            text/plain:
+              schema:
+                type: string
+      x-openapi-router-controller: node_api.controllers.deploy_controller
+  /Deployments:
+    get:
+      tags:
+        - t1
+      summary : get the ids, names and created time of all currently deployed clusters
+      description: same as summary, only for testing.
+      operationId: get_deployments
+      responses:
+        "200":
+          description: List of all deployements
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ArrayOfDeployment'
+      x-openapi-router-controller: node_api.controllers.deploy_controller
+    post:
+      summary: create a new deployment
+      description: send all the parameters required to create a deployment in aks cluster
+      operationId: make_Deployment
+      requestBody:
+        description: create deploymeny object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeploymentRequest'
+      responses:
+        "201":
+          description: PENDING
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Deployment'
+      x-openapi-router-controller: node_api.controllers.deploy_controller
+  
+      
+
+components:
+  schemas:
+    ArrayOfDeployment:
+      description: List of description schema
+      type: array
+      items:
+        $ref: '#components/schemas/Deployment'
+
+    Deployment:
+      description: An object of ids, name and status of the deployments.
+      required:
+        - id
+        - name
+        - status
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        cluster_name:
+          $ref: '#components/schemas/cluster_name'
+        cluster_status:
+          $ref: '#components/schemas/cluster_status'
+        created_at:
+          $ref: '#components/schemas/created_at'
+        resource_group:
+          $ref: '#components/schemas/resource_group'
+        region:
+          $ref: '#components/schemas/region'
+        node_size:
+          $ref: '#components/schemas/node_size'
+        node_count:
+          $ref: '#components/schemas/node_count'
+    DeploymentRequest:
+      description: Request for a new deployment
+      required:
+        - cluster_name
+        - resource_group
+        - region
+        - node_size
+        - node_count
+      properties:
+        cluster_name:
+          $ref: '#components/schemas/cluster_name'
+        resource_group:
+          $ref: '#components/schemas/resource_group'
+        region:
+          $ref: '#components/schemas/region'
+        node_size:
+          $ref: '#components/schemas/node_size'
+        node_count:
+          $ref: '#components/schemas/node_count'
+        
+
+
+
+        
+        
+    id:
+      description: A unique id for each deployment
+      type: string
+    cluster_name:
+      description: name of the cluster
+      type: string
+    cluster_status:
+      description: status of the deployment. Complete / in progress / failed
+      type: string        
+    created_at:
+      description: time of creation
+      type: string
+    resource_group:
+      description: name of resource group
+      type: string
+    region: 
+      description: region
+      type: string
+    node_size:
+      description: node size
+      type: string
+    node_count:
+      description: number of nodes
+      type: string
+    
